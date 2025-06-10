@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdPrograms  FrequentFlyerProgram[] @relation("ProgramCreator")
+  modifiedPrograms FrequentFlyerProgram[] @relation("ProgramModifier")
+  createdRatios    TransferRatio[]        @relation("RatioCreator")
+  modifiedRatios   TransferRatio[]        @relation("RatioModifier")
+
+  @@map("users")
+}
+
+model FrequentFlyerProgram {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  assetName  String?
+  enabled    Boolean  @default(true)
+  archived   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  createdById  String
+  modifiedById String
+
+  createdBy  User @relation("ProgramCreator", fields: [createdById], references: [id])
+  modifiedBy User @relation("ProgramModifier", fields: [modifiedById], references: [id])
+
+  transferRatios TransferRatio[]
+
+  @@index([enabled])
+  @@index([createdAt])
+  @@map("frequent_flyer_programs")
+}
+
+model CreditCard {
+  id         String   @id @default(uuid())
+  name       String
+  bankName   String
+  archived   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  transferRatios TransferRatio[]
+
+  @@index([bankName, name])
+  @@index([archived])
+  @@map("credit_cards")
+}
+
+model TransferRatio {
+  id           String   @id @default(uuid())
+  programId    String
+  creditCardId String
+  ratio        Float
+  archived     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  modifiedAt   DateTime @updatedAt
+
+  createdById  String
+  modifiedById String
+
+  program    FrequentFlyerProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  creditCard CreditCard           @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
+  createdBy  User                 @relation("RatioCreator", fields: [createdById], references: [id])
+  modifiedBy User                 @relation("RatioModifier", fields: [modifiedById], references: [id])
+
+  // Each card can only have one transfer ratio per program
+  @@unique([programId, creditCardId])
+  @@index([programId])
+  @@index([creditCardId])
+  @@index([archived])
+  @@map("transfer_ratios")
+}
