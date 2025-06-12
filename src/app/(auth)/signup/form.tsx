@@ -1,6 +1,7 @@
 'use client';
 
 import { SignUpForm } from '@/components/forms/auth/signup-from';
+import { ApiStatus } from '@/types/response';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -24,7 +25,7 @@ const SignUpFormContainer = () => {
       });
 
       const result = await response.json();
-      if (!response.ok || !result.success) {
+      if (!response.ok || result.status !== ApiStatus.OK) {
         throw new Error(result.error || 'Registration failed');
       }
 
