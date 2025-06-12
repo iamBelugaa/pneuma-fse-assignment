@@ -7,3 +7,8 @@ export interface ICreditCard extends IBaseEntity {
   archived: boolean;
   transferRatios?: ITransferRatio[];
 }
+
+export interface ICreateCreditCardData {
+  name: string;
+  bankName: string;
+}

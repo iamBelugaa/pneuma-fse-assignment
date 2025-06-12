@@ -3,9 +3,3 @@ export interface IBaseEntity {
   createdAt: Date;
   modifiedAt: Date;
 }
-
-export interface FormState {
-  error?: string;
-  success?: boolean;
-  isLoading: boolean;
-}
