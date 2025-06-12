@@ -10,7 +10,8 @@
     "prisma:generate": "npx prisma generate",
     "migrate:prod": "npx prisma migrate deploy",
     "build": "npm run prisma:generate && next build",
-    "dev": "npm run prisma:generate && next dev --turbopack"
+    "dev": "npm run prisma:generate && next dev --turbopack",
+    "migrate:create:only": "npx prisma migrate dev --create-only --name init"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.826.0",

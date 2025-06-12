@@ -14,83 +14,16 @@
 
 ## Project Structure
 
-```
-pneuma-fse-assignment/
-│
-├── Database & Migrations
-│   └── prisma/
-│       ├── migrations/         # Database migration files
-│       ├── schema.prisma       # Database schema definition
-│       └── seed.ts            # Database seeding script
-│
-└── Source Code
-    └── src/
-        ├── API Routes
-        │   └── app/api/
-        │       ├── auth/[...nextauth]/  # Authentication endpoints
-        │       ├── credit-cards/        # Credit card CRUD operations
-        │       ├── programs/            # FFP CRUD operations
-        │       ├── transfer-ratios/     # Transfer ratio management
-        │       └── upload/              # File upload endpoint
-        │
-        ├── Application Pages
-        │   └── app/
-        │       ├── (auth)/             # Authentication pages
-        │       │   ├── signin/         # Sign-in page
-        │       │   └── signup/         # Sign-up page
-        │       ├── error.tsx           # Error boundary
-        │       ├── favicon.ico         # Site favicon
-        │       ├── globals.css         # Global styles
-        │       ├── layout.tsx          # Root layout
-        │       ├── loading.tsx         # Loading component
-        │       └── page.tsx            # Dashboard/main page
-        │
-        ├── Reusable Components
-        │   └── components/
-        │       ├── forms/              # Form components
-        │       │   ├── auth/           # Authentication forms
-        │       │   └── programs/       # Program management forms
-        │       ├── programs/           # Program-specific components
-        │       ├── tables/             # Table components
-        │       └── ui/                 # Base UI components (Radix UI)
-        │
-        ├── Custom Hooks
-        │   └── hooks/
-        │       ├── use-dashboard-actions.ts    # Dashboard state management
-        │       ├── use-file-upload.ts          # File upload logic
-        │       ├── use-programs-api.ts         # Program API calls
-        │       ├── use-programs-state.ts       # Program state management
-        │       └── use-transfer-ratios.ts      # Transfer ratio management
-        │
-        ├── Core Libraries
-        │   └── lib/
-        │       ├── auth.ts             # Authentication configuration
-        │       ├── prisma.ts           # Database client
-        │       ├── response.ts         # API response utilities
-        │       ├── schemas/            # Zod validation schemas
-        │       ├── utils.ts            # Utility functions
-        │       └── validation.ts       # Form validation helpers
-        │
-        ├── Data Layer
-        │   ├── repositories/           # Data access layer
-        │   │   ├── credit-card.repository.ts
-        │   │   ├── program.repository.ts
-        │   │   └── transfer-ratio.repository.ts
-        │   └── services/               # Business logic layer
-        │       ├── credit-card.service.ts
-        │       ├── program.service.ts
-        │       ├── transfer-ratio.service.ts
-        │       └── upload.service.ts
-        │
-        └── Type Definitions
-            └── types/
-                ├── card.ts             # Credit card types
-                ├── program.ts          # FFP types
-                ├── ratio.ts            # Transfer ratio types
-                ├── response.ts         # API response types
-                ├── upload.ts           # File upload types
-                └── user.ts             # User types
-```
+This is a Next.js application with a clean architecture. The main folders are:
+
+- `prisma/` - Database schema, migrations, and seed data.
+- `src/app/` - Pages and API routes.
+- `src/components/` - Reusable UI components.
+- `src/hooks/` - Custom React hooks for state management.
+- `src/lib/` - Utility functions and configurations.
+- `src/repositories/` - Database access layer.
+- `src/services/` - Business logic.
+- `src/types/` - TypeScript type definitions.
 
 ## Getting Started
 
@@ -122,7 +55,7 @@ CLOUDFLARE_R2_SECRET_ACCESS_KEY=
 1. **Clone and install dependencies**
 
 ```bash
- git clone <repository-url>
+ git clone https://github.com/iamNilotpal/pneuma-fse-assignment.git
  cd pneuma-fse-assignment
  npm install
 ```
@@ -130,11 +63,14 @@ CLOUDFLARE_R2_SECRET_ACCESS_KEY=
 2. **Set up the database**
 
 ```bash
- # Generate Prisma client
- npx prisma generate
+ # Create initial migration
+ npm run migration:create:only
 
- # Run database migrations
- npx prisma migrate deploy
+ # Deploy migrations to database
+ npm run migrate:prod
+
+ # Generate Prisma client
+ npm run prisma:generate
 
  # Seed the database with sample data
  npm run db:seed
@@ -154,16 +90,16 @@ CLOUDFLARE_R2_SECRET_ACCESS_KEY=
 
 ```bash
 # Development
-npm run dev             # Start development server with turbopack
+npm run dev             # Start development server with turbopack.
 
 # Production
-npm run build           # Build for production (includes Prisma generate)
-npm start               # Start production server
+npm run build           # Build for production (includes Prisma generate).
+npm start               # Start production server.
 
 # Database
-npm run db:seed         # Seed database with sample data
-npm run prisma:studio   # Open Prisma Studio (database GUI)
-npm run migrate:prod    # Deploy migrations to production
+npm run db:seed         # Seed database with sample data.
+npm run prisma:studio   # Open Prisma Studio (database GUI).
+npm run migrate:prod    # Deploy migrations to production.
 
 # Code Quality
 npm run lint            # Run ESLint
