@@ -73,22 +73,24 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="flex h-16 items-center px-4 lg:px-6">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-semibold">Pneuma FFP Portal</h1>
-          </div>
-
-          <div className="ml-auto flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {session.user?.name || session.user?.email}
-            </span>
-            <SignoutButton />
-          </div>
+    <section className="min-h-screen bg-background">
+      <header className="border-b flex h-16 items-center px-5 md:px-8">
+        <div className="flex space-x-4 sm:flex-row flex-col">
+          <h1 className="text-base sm:text-xl font-semibold truncate">
+            Pneuma FFP Portal
+          </h1>
+          <p className="sm:hidden text-sm text-muted-foreground">
+            Welcome, {session.user?.name || session.user?.email}
+          </p>
+        </div>
+        <div className="ml-auto flex items-center space-x-3 sm:space-x-4">
+          <p className="text-sm text-muted-foreground hidden sm:block">
+            Welcome, {session.user?.name || session.user?.email}
+          </p>
+          <SignoutButton />
         </div>
       </header>
-      <main className="flex-1 space-y-4 p-8 pt-6">
+      <main className="flex-1 space-y-4 px-5 md:px-8 pt-6">
         <ProgramsDashboard
           creditCards={creditCards}
           initialQuery={initialQuery}
@@ -96,6 +98,6 @@ export default async function HomePage() {
           initialPrograms={programsResult.programs}
         />
       </main>
-    </div>
+    </section>
   );
 }

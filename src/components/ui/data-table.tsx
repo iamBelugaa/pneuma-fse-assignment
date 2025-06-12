@@ -288,8 +288,9 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
+
+      <div className="flex flex-col space-y-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div className="text-sm text-muted-foreground">
           {!enableServerSidePagination &&
             table.getFilteredSelectedRowModel().rows.length > 0 && (
               <span>
@@ -305,16 +306,19 @@ export function DataTable<TData, TValue>({
             </span>
           )}
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
+
+        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-6">
+          <div className="flex items-center justify-between sm:justify-start space-x-2">
+            <p className="text-sm font-medium whitespace-nowrap">
+              Rows per page
+            </p>
             <Select
               value={paginationState.pageSize.toString()}
               onValueChange={(v) => {
                 table.setPageSize(Number(v));
               }}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-[70px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -328,45 +332,45 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
-
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {Math.max(1, table.getState().pagination.pageIndex + 1)} of{' '}
-            {Math.max(1, table.getPageCount())}
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage() || isLoading}
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="h-8 w-8 p-0"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage() || isLoading}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="h-8 w-8 p-0"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage() || isLoading}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage() || isLoading}
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center justify-between sm:justify-start space-x-3">
+            <div className="text-sm font-medium whitespace-nowrap">
+              Page {Math.max(1, table.getState().pagination.pageIndex + 1)} of{' '}
+              {Math.max(1, table.getPageCount())}
+            </div>
+            <div className="flex items-center space-x-1">
+              <Button
+                variant="outline"
+                className="hidden h-8 w-8 p-0 sm:flex"
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage() || isLoading}
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage() || isLoading}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage() || isLoading}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="hidden h-8 w-8 p-0 sm:flex"
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage() || isLoading}
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
