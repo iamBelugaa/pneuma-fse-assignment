@@ -3,5 +3,17 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always"
   },
-  "cSpell.words": ["NEXTAUTH", "presigner"]
+  "cSpell.words": [
+    "cloudflarestorage",
+    "Etihad",
+    "HDFC",
+    "Iconia",
+    "indusind",
+    "NEXTAUTH",
+    "presigner",
+    "Rewardz",
+    "sonner",
+    "turbopack",
+    "vaul"
+  ]
 }
