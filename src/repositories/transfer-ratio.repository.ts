@@ -83,20 +83,4 @@ export class TransferRatioRepository {
 
     return result.count;
   }
-
-  async archiveByCreditCard(
-    creditCardId: string,
-    userId: string
-  ): Promise<number> {
-    const result = await this.prisma.transferRatio.updateMany({
-      where: { creditCardId, archived: false },
-      data: {
-        archived: true,
-        modifiedById: userId,
-        modifiedAt: new Date(),
-      },
-    });
-
-    return result.count;
-  }
 }

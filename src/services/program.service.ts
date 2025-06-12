@@ -8,13 +8,13 @@ import { ProgramRepository } from '@/repositories/program.repository';
 export class ProgramService {
   constructor(private programRepository: ProgramRepository) {}
 
-  async getAllPrograms(input: ProgramQueryInput) {
-    return this.programRepository.findAll(input);
+  async getAllPrograms(input: ProgramQueryInput, userId: string) {
+    return this.programRepository.findAll(input, userId);
   }
 
-  async getProgramById(id: string) {
-    const program = await this.programRepository.findById(id);
-    if (!program) throw new Error('Program not found');
+  async getProgramById(id: string, userId: string) {
+    const program = await this.programRepository.findById(id, userId);
+    if (!program) throw new Error('Program not found or access denied');
     return program;
   }
 
@@ -79,15 +79,15 @@ export class ProgramService {
     return this.programRepository.update(id, updateData, userId);
   }
 
-  async deleteProgram(id: string) {
-    return this.programRepository.delete(id);
+  async deleteProgram(id: string, userId: string) {
+    return this.programRepository.delete(id, userId);
   }
 
   async toggleProgramEnabled(id: string, enabled: boolean, userId: string) {
     return this.programRepository.toggleEnabled(id, enabled, userId);
   }
 
-  async getProgramStats() {
-    return this.programRepository.getStats();
+  async getProgramStats(userId: string) {
+    return this.programRepository.getStats(userId);
   }
 }

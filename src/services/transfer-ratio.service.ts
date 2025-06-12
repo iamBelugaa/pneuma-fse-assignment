@@ -37,14 +37,4 @@ export class TransferRatioService {
   ): Promise<number> {
     return this.transferRatioRepository.archiveByProgram(programId, userId);
   }
-
-  async archiveTransferRatiosByCreditCard(
-    creditCardId: string,
-    userId: string
-  ): Promise<number> {
-    return this.transferRatioRepository.archiveByCreditCard(
-      creditCardId,
-      userId
-    );
-  }
 }

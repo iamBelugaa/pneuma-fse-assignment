@@ -9,12 +9,12 @@ import { PaginationMeta } from '@/types/response';
 export class ProgramRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findAll(input: ProgramQueryInput) {
+  async findAll(input: ProgramQueryInput, userId: string) {
     const { page, pageSize } = input;
 
     const [result, total] = await Promise.all([
       this.prisma.frequentFlyerProgram.findMany({
-        where: { archived: false },
+        where: { archived: false, createdById: userId },
         orderBy: { createdAt: 'desc' },
         take: pageSize,
         skip: page * pageSize,
@@ -35,7 +35,7 @@ export class ProgramRepository {
         },
       }),
       this.prisma.frequentFlyerProgram.count({
-        where: { archived: false },
+        where: { archived: false, createdById: userId },
       }),
     ]);
 
@@ -44,9 +44,9 @@ export class ProgramRepository {
     return { programs: result, pagination };
   }
 
-  async findById(id: string) {
-    return this.prisma.frequentFlyerProgram.findUnique({
-      where: { id },
+  async findById(id: string, userId: string) {
+    return this.prisma.frequentFlyerProgram.findFirst({
+      where: { id, archived: false, createdById: userId },
       select: {
         id: true,
         name: true,
@@ -132,6 +132,15 @@ export class ProgramRepository {
     const { transferRatios, ...programData } = data;
 
     return this.prisma.$transaction(async (tx) => {
+      const existingProgram = await tx.frequentFlyerProgram.findFirst({
+        where: { id, archived: false, createdById: userId },
+        select: { id: true },
+      });
+
+      if (!existingProgram) {
+        throw new Error('Program not found or access denied');
+      }
+
       await tx.frequentFlyerProgram.update({
         where: { id },
         data: { ...programData, modifiedById: userId },
@@ -151,9 +160,7 @@ export class ProgramRepository {
 
         if (ratiosToArchive.length > 0) {
           await tx.transferRatio.updateMany({
-            where: {
-              id: { in: ratiosToArchive.map((r) => r.id) },
-            },
+            where: { id: { in: ratiosToArchive.map((r) => r.id) } },
             data: { archived: true, modifiedById: userId },
           });
         }
@@ -196,12 +203,8 @@ export class ProgramRepository {
           archived: true,
           createdAt: true,
           modifiedAt: true,
-          createdBy: {
-            select: { id: true, email: true },
-          },
-          modifiedBy: {
-            select: { id: true, email: true },
-          },
+          createdBy: { select: { id: true, email: true } },
+          modifiedBy: { select: { id: true, email: true } },
           transferRatios: {
             where: { archived: false },
             select: {
@@ -221,16 +224,25 @@ export class ProgramRepository {
     });
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, userId: string): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
+      const existingProgram = await tx.frequentFlyerProgram.findFirst({
+        where: { id, archived: false, createdById: userId },
+        select: { id: true },
+      });
+
+      if (!existingProgram) {
+        throw new Error('Program not found or access denied');
+      }
+
       await Promise.all([
         tx.transferRatio.updateMany({
           where: { programId: id, archived: false },
-          data: { archived: true },
+          data: { archived: true, modifiedById: userId },
         }),
         tx.frequentFlyerProgram.update({
           where: { id },
-          data: { archived: true },
+          data: { archived: true, modifiedById: userId },
           select: { id: true },
         }),
       ]);
@@ -238,18 +250,24 @@ export class ProgramRepository {
   }
 
   async toggleEnabled(id: string, enabled: boolean, userId: string) {
+    const existingProgram = await this.prisma.frequentFlyerProgram.findFirst({
+      where: { id, archived: false, createdById: userId },
+      select: { id: true },
+    });
+
+    if (!existingProgram) {
+      throw new Error('Program not found or access denied');
+    }
+
     return this.prisma.frequentFlyerProgram.update({
       where: { id },
-      data: {
-        enabled,
-        modifiedById: userId,
-      },
+      data: { enabled, modifiedById: userId },
       select: {
         id: true,
         name: true,
-        assetName: true,
         enabled: true,
         archived: true,
+        assetName: true,
         createdAt: true,
         modifiedAt: true,
         createdBy: { select: { id: true, email: true } },
@@ -259,43 +277,33 @@ export class ProgramRepository {
           select: {
             id: true,
             ratio: true,
-            creditCard: {
-              select: {
-                id: true,
-                name: true,
-                bankName: true,
-              },
-            },
+            creditCard: { select: { id: true, name: true, bankName: true } },
           },
         },
       },
     });
   }
 
-  async getStats(): Promise<{
+  async getStats(userId: string): Promise<{
     total: number;
     enabled: number;
     disabled: number;
     withTransferRatios: number;
   }> {
     const stats = await this.prisma.frequentFlyerProgram.aggregate({
-      where: { archived: false },
-      _count: {
-        id: true,
-        enabled: true,
-      },
+      where: { archived: false, createdById: userId },
+      _count: { id: true, enabled: true },
     });
 
     const [enabledCount, withRatiosCount] = await Promise.all([
       this.prisma.frequentFlyerProgram.count({
-        where: { archived: false, enabled: true },
+        where: { enabled: true, archived: false, createdById: userId },
       }),
       this.prisma.frequentFlyerProgram.count({
         where: {
           archived: false,
-          transferRatios: {
-            some: { archived: false },
-          },
+          createdById: userId,
+          transferRatios: { some: { archived: false } },
         },
       }),
     ]);

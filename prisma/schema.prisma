@@ -25,7 +25,7 @@ model User {
 
 model FrequentFlyerProgram {
   id         String   @id @default(uuid())
-  name       String   @unique
+  name       String
   assetName  String?
   enabled    Boolean  @default(true)
   archived   Boolean  @default(false)
@@ -40,8 +40,16 @@ model FrequentFlyerProgram {
 
   transferRatios TransferRatio[]
 
-  @@index([enabled])
+  // Ensure a user can't create duplicate program names.
+  @@unique([name, createdById])
+  // Index for sorting programs by creation date.
   @@index([createdAt])
+  // Index for filtering programs by creator.
+  @@index([createdById])
+  // Composite index for efficiently filtering user's non-archived programs.
+  @@index([createdById, archived])
+  // Index for filtering out archived programs globally.
+  @@index([archived])
   @@map("frequent_flyer_programs")
 }
 
@@ -55,7 +63,9 @@ model CreditCard {
 
   transferRatios TransferRatio[]
 
+  // Composite index for efficiently searching credit cards by bank and name.
   @@index([bankName, name])
+  // Index for filtering out archived credit cards.
   @@index([archived])
   @@map("credit_cards")
 }
@@ -77,10 +87,11 @@ model TransferRatio {
   createdBy  User                 @relation("RatioCreator", fields: [createdById], references: [id])
   modifiedBy User                 @relation("RatioModifier", fields: [modifiedById], references: [id])
 
-  // Each card can only have one transfer ratio per program
+  // Each card can only have one transfer ratio per program.
   @@unique([programId, creditCardId])
+  // Index for quickly finding all transfer ratios for a specific program.
   @@index([programId])
-  @@index([creditCardId])
+  // Index for filtering out archived transfer ratios.
   @@index([archived])
   @@map("transfer_ratios")
 }
