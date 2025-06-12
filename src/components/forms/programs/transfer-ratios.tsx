@@ -50,7 +50,7 @@ const getFieldError = (
   return current?.message;
 };
 
-export function TransferRatiosSection({
+export function TransferRatios({
   watch,
   errors,
   control,
