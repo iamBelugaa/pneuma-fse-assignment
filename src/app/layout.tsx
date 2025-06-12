@@ -1,4 +1,6 @@
+import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -18,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('antialiased', interSans.className)}>{children}</body>
+      <body className={cn('antialiased', interSans.className)}>
+        {children}
+        <Toaster richColors theme="light" />
+      </body>
     </html>
   );
 }
