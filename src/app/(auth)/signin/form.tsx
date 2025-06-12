@@ -16,9 +16,9 @@ const SigninFormContainer = () => {
 
     try {
       const result = await signIn('credentials', {
-        email: email,
+        email,
+        password,
         redirect: false,
-        password: password,
       });
 
       if (!result || result.error || !result.ok) {
@@ -30,7 +30,7 @@ const SigninFormContainer = () => {
         return;
       }
 
-      router.push('/');
+      router.replace('/');
       router.refresh();
     } catch (error) {
       console.error('Login error:', error);
