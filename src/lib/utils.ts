@@ -1,4 +1,4 @@
-import { ProgramWithRatios } from '@/types/program';
+import { IProgramWithRatios } from '@/types/program';
 import { ApiStatus } from '@/types/response';
 import { clsx, type ClassValue } from 'clsx';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -101,7 +101,7 @@ export function generateFileName(
 }
 
 export function formatTransferRatiosForForm(
-  transferRatios: ProgramWithRatios['transferRatios']
+  transferRatios: IProgramWithRatios['transferRatios']
 ): { ratio: number; creditCardId: string }[] {
   return transferRatios.map((ratio) => ({
     ratio: ratio.ratio,
